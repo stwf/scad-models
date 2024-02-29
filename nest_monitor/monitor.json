@@ -1,0 +1,23 @@
+{
+    "parameterSets": {
+        "design default values": {
+            "cap_rotate_angle": "180",
+            "cross_section": "0",
+            "face_rotate_angle": "130",
+            "production": "true",
+            "show_base": "true",
+            "show_cap": "true",
+            "show_face": "true"
+        },
+        "closed": {
+            "cap_rotate_angle": "180",
+            "cross_section": "0",
+            "face_rotate_angle": "130",
+            "production": "true",
+            "show_base": "true",
+            "show_cap": "true",
+            "show_face": "true"
+        }
+    },
+    "fileFormatVersion": "1"
+}
