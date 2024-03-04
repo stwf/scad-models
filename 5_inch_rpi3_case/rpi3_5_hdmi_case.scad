@@ -7,30 +7,57 @@ padding = [4,4,4];
 
 module __Customizer_Limit__ () {}
 
-tray();
+// tray();
 
 
-translate([20, 103, 0])
-  rotate([0, 0, 270])
-    hinges();
+///translate([20, 103, 0])
+ // rotate([0, 0, 270])
+//    hinges();
 
-translate([-20, 103, 28]) {
-//  rotate([0, 90, 0])
-  //  cylinder(r = 1, h =200);
+difference() {
+  union(){
+    translate([0, 72, 3]) {
+      rotate([120, 0, 0])
+        draw_screen();
+    }
 
-    rotate([0, 0, 0])
+    difference() {
+      rpi4( padding_top=22,
+        padding_front=0,
+        padding_back=8,
+        padding_bottom = 4,
+        padding_left = 54,
+        buffer_top = 0,
+        buffer_back = 14,
+        buffer_front = 8,
+        buffer_left=6,
+        expose_audio=false,
+        expose_hdmi1=false,
+        expose_hdmi2=false
+      );
+      translate([30, 2, 18])
+        cube([114, 10, 24]);
+    }
+      rotate([0,90,0]){
+        translate([-113, 34, 0])
+        linear_extrude(6)
+          polygon( points=[[0, 0], [80,0],[80,50]] );
 
-  
-    draw_screen();
-}
+        translate([-113, 34, 147])
+        linear_extrude(3)
+          polygon( points=[[0, 0], [80,0],[80,50]] );
+      }
 
-translate([0, -80, 0]) {
-  rpi4([4, 4, 4], [0, 0, 2]);
+  }
+  translate([-slop, 88, 26])
+    rotate([0,90,0])
+      linear_extrude(200)
+          polygon( points=[[-2,2], [-2,0],[-11-slop,-3],[-11-slop,2]] );
 
-// translate([4, 61, 5])
-//  rotate([0, 0, 270])
-  // board_raspberrypi_4_model_b();
-
+  translate([22, 88 + slop, 19])
+    rotate([90,0,0])
+      linear_extrude(8 + 2slop)
+        circle(d=12);
 }
 
 
@@ -60,11 +87,11 @@ module tray() {
 }
 
 module draw_screen() {
-translate([20, 13.8, -28])
+translate([0, 13.8, -28])
   difference() {
-    cube([170, 100, 6]);
-    translate([13, 11, 0])
-      cube([124, 78, 6 + slop]);
+    cube([150, 100, 6]);
+    translate([13, 11, -slop])
+      cube([124, 78, 6 + 2slop]);
     
     translate([19, 8, 2]) {
       cylinder(r = 1.25, h = 4);
@@ -77,10 +104,7 @@ translate([20, 13.8, -28])
     
       translate([0, 85, 0])
         cylinder(r = 1.25, h = 4);
-  
-      translate([135, 65, 0])
-        cylinder(r = 7, h = 4);
-    }
+      }
   }
 }
 
