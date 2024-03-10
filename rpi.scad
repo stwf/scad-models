@@ -97,7 +97,7 @@ module rpi4(
     translate([buffer_left + padding_left, 0, buffer_bottom + padding_bottom]) {
       if (expose_power)  
         translate([9, -slop, 0])
-          cube([14, buffer_back+ 2slop, 8]);
+          cube([14, buffer_back + 2slop, 8]);
 
       if (expose_hdmi1)  
         translate([26.5, -slop, 0])
@@ -105,12 +105,12 @@ module rpi4(
 
       if (expose_hdmi2)  
         translate([40, -slop, 0])
-          cube([9, buffer_back+ 2slop, 5]);
+          cube([9, buffer_back + 2slop, 5]);
 
       if (expose_audio)  
         translate([55, -slop, 3])
           rotate([0,90,90])
-            cylinder(r=2, h=buffer_back+ 2slop);
+            cylinder(r=2, h=buffer_back + 2slop);
     }
   }
 }

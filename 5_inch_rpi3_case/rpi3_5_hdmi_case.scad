@@ -1,68 +1,75 @@
 include <../rpi.scad>;
 include <../hinge.scad>;
+include <../screens.scad>;
 // include <../RPi4board-modded.scad>;
 
-buffer = [4, 4, 8];
-padding = [4,4,4];
+show_case = true;
+show_lid = false;
 
 module __Customizer_Limit__ () {}
 
-// tray();
+p_back = 11;
+p_front = 18;
+b_back = 14;
+b_front = 8;
 
+pi4_width = 56;
 
-///translate([20, 103, 0])
- // rotate([0, 0, 270])
-//    hinges();
-
-difference() {
-  union(){
-    translate([0, 72, 3]) {
+if (show_case) {
+  difference() {
+  
+    union(){
+      translate([0, 70, 4 ]) {
       rotate([120, 0, 0])
-        draw_screen();
-    }
 
-    difference() {
-      rpi4( padding_top=22,
-        padding_front=0,
-        padding_back=8,
-        padding_bottom = 4,
-        padding_left = 54,
-        buffer_top = 0,
-        buffer_back = 14,
-        buffer_front = 8,
-        buffer_left=6,
-        expose_audio=false,
-        expose_hdmi1=false,
-        expose_hdmi2=false
-      );
-      translate([30, 2, 18])
-        cube([114, 10, 24]);
-    }
-      rotate([0,90,0]){
-        translate([-113, 34, 0])
-        linear_extrude(6)
-          polygon( points=[[0, 0], [80,0],[80,50]] );
-
-        translate([-113, 34, 147])
-        linear_extrude(3)
-          polygon( points=[[0, 0], [80,0],[80,50]] );
+translate([0, 13.8, -28])
+      draw_screen();
       }
+      difference() {
+        rpi4( padding_top = 14,
+          padding_front = p_front,
+          padding_back = 0,
+          padding_bottom = 4,
+          padding_left = 64,
+          buffer_top = 0,
+          buffer_bottom = 30,
+          buffer_front = b_front,
+          buffer_left=6
+        );
 
+        front_heel();
+      usb_disk();
+
+      }
+//      leg_stands();
+    }
+
+    cylinder_button();
   }
-  translate([-slop, 88, 26])
-    rotate([0,90,0])
-      linear_extrude(200)
-          polygon( points=[[-2,2], [-2,0],[-11-slop,-3],[-11-slop,2]] );
-
-  translate([22, 88 + slop, 19])
-    rotate([90,0,0])
-      linear_extrude(8 + 2slop)
-        circle(d=12);
+}
+if (show_lid) {
+  translate([0, 0, 36])
+    rotate([0,0,0])
+    cube([150, 34, 77]);
 }
 
+module usb_disk() {
+  translate([4, 4, 2])
+  cube([115, 80, 26 + slop]);
+  translate([119, 30, 2])
+  cube([45, 20, 26 + slop]);
+}
+module leg_stands() {
+  rotate([0,90,0]){
+    translate([-133, 34, 0])
+      linear_extrude(6)
+        polygon( points=[[0, 0], [80,0],[80,50]] );
 
-
-
+    translate([-133, 34, 177])
+      linear_extrude(3)
+        polygon( points=[[0, 0], [80,0],[80,50]] );
+  }
+}
 
 
 
@@ -86,32 +93,25 @@ module tray() {
 
 }
 
-module draw_screen() {
-translate([0, 13.8, -28])
-  difference() {
-    cube([150, 100, 6]);
-    translate([13, 11, -slop])
-      cube([124, 78, 6 + 2slop]);
-    
-    translate([19, 8, 2]) {
-      cylinder(r = 1.25, h = 4);
-       
-      translate([113, 0, 0])
-        cylinder(r = 1.25, h = 4);
-    
-      translate([113, 85, 0])
-        cylinder(r = 1.25, h = 4);
-    
-      translate([0, 85, 0])
-        cylinder(r = 1.25, h = 4);
-      }
-  }
+module cylinder_button() {
+    translate([22, p_back + p_front + pi4_width + b_back - slop + 8, 44])
+    rotate([90,0,0])
+      linear_extrude(b_front + 2slop + 1)
+        circle(d=14);
+
 }
 
+module front_heel() {
+      translate([-slop, 79 - slop, 30])
+      cube([220, b_front + 2slop, 30]);
+}
 
-
-
-
+module front_heel_old() {
+      translate([-slop, 91, 38])
+      rotate([0,90,0])
+        linear_extrude(160)
+          polygon( points=[[-2,2], [-2,0],[-11-slop,-6.3],[-11-slop,2]] );
+}
 
 
 
