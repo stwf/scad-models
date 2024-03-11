@@ -36,12 +36,14 @@ module chomp_stand()
   {
     union() {
       chomp_base();
-      translate([-40, 102, 4])
+      translate([-31, 102, 4])
         rotate([115,0,0])
-          draw_screen();
+          5_inch_touchscreen(frame_top=3);
       base();
-      translate([-40, 54, 0])
+      translate([-31, 54, 0])
         cube([160, 48, 4]);
+      translate([0, 24, 0])
+        cube([90, 30, 3.0]);
     }
     hd_bays();
     cutaways();
