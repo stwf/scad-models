@@ -36,19 +36,22 @@ module chomp_stand()
   {
     union() {
       chomp_base();
-      translate([-31, 102, 4])
+      translate([-31, 102, 13])
         rotate([115,0,0])
           5_inch_touchscreen(frame_top=3);
       base();
       translate([-31, 54, 0])
-        cube([160, 48, 4]);
-      translate([0, 24, 0])
-        cube([90, 30, 3.0]);
+        cube([160, 48, 2]);
+      translate([-31, 89, 0])
+        cube([160, 8, 22]);
     }
     hd_bays();
     cutaways();
     usb_hub_bay();
-    rpi_cable_bay();
+    
+    translate([-31 - slop, 97, 0])
+        cube([160 + 2slop, 8, 40]);
+
   }
 }
 
@@ -62,15 +65,19 @@ module chomp_base()
   rotate([-90,180,0])
     translate([-99, 0, usb_hub.z + 2])
         rpi4( padding_top = p_top,
-          padding_front = 4,
-          padding_back = 0,
+          padding_front = 6,
+          padding_back = 24,
           padding_bottom = 4,
           padding_left = 4,
           buffer_top = 0,
-          buffer_back = 14,
+          buffer_back = 2,
           buffer_bottom = 2,
-          buffer_front = 12,
-          buffer_left=6
+          buffer_front = 8,
+          buffer_left=6,
+          expose_hdmi1=false,
+          expose_hdmi2=false,
+          expose_power=false,
+          expose_audio=false
         );
 
 }
