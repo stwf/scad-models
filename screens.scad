@@ -13,7 +13,7 @@ def_frame_bottom = 6;
 def_frame_top = 0;
 screw_mount = 3.8;
 
-5_inch = [120, 75, 3];
+5_inch = [122, 77, 5];
 
 // 5_inch_touchscreen();
 
@@ -24,7 +24,8 @@ module 5_inch_touchscreen(
   frame_back = def_frame_back,
   frame_bottom = def_frame_bottom,
   frame_top = def_frame_top) {
-  draw_screen(5_inch, frame_left=frame_left, frame_top=frame_top);
+  draw_screen(5_inch, frame_left=frame_left, frame_right=frame_right, frame_top=frame_top, frame_bottom=frame_bottom,
+    frame_back=frame_back, frame_front=frame_front);
 }
 
 module 5_inch_display(extra = 1, hole = true) {

@@ -1,7 +1,7 @@
 axle_gap=1.6;
 hinge_gap=1.4;
 slop=0.01;
-hinge_rotate=0;
+the_hinge_rotate=0;
 module __Customizer_Limit__ () {}
 
 box_width=60;
@@ -16,21 +16,21 @@ module test()
 box_a();
 
 translate([0, 0, hinge_height])
-  rotate([0, hinge_rotate,0]) 
+  rotate([0, the_hinge_rotate,0]) 
   translate([0, 0, -hinge_height])
   box_b();
 
-hinge(0, 12);
-hinge(0, 48);
+hinge(0, 12, hinge_rotate=the_hinge_rotate);
+hinge(0, 48, hinge_rotate=the_hinge_rotate);
 }
 
-module hinge(axis, offset, hinge_rise=4.0, hinge_reach=0.1, axle_thickness=1.2, hinge_width=5, hinge_gap=0.4)
+module hinge(axis, offset, hinge_rise=4.0, hinge_reach=0.1, hinge_reach_2=0.1, axle_thickness=1.2, hinge_width=5, hinge_gap=0.4, hinge_rotate=0, hinge_rotate_b=0)
 {
-  hinge_arm(axis, offset, hinge_rise, hinge_reach, axle_thickness, hinge_width, hinge_gap);
-  hinge_bay(axis, offset, hinge_rise, hinge_reach, axle_thickness, hinge_width, hinge_gap);
+  hinge_arm(axis, offset, hinge_rise, hinge_reach_2, axle_thickness, hinge_width, hinge_gap, hinge_rotate_b);
+  hinge_bay(axis, offset, hinge_rise, hinge_reach, axle_thickness, hinge_width, hinge_gap, hinge_rotate);
 }
 
-module hinge_arm(axis, offset, hinge_rise, hinge_reach, axle_thickness, hinge_width, hinge_gap)
+module hinge_arm(axis, offset, hinge_rise, hinge_reach, axle_thickness, hinge_width, hinge_gap, hinge_rotate_b)
 {
   axle_radius=axle_thickness*2;
   outer_axle_radius = axle_radius + axle_thickness + axle_gap;
@@ -38,6 +38,7 @@ module hinge_arm(axis, offset, hinge_rise, hinge_reach, axle_thickness, hinge_wi
   hinge_height=box_height + hinge_rise;
   translate([axis, offset - hinge_width/2, hinge_height])
   rotate([-90,0,0]) 
+  rotate([0,0, -hinge_rotate_b])
   linear_extrude(hinge_width)
   {
     difference()
@@ -45,15 +46,15 @@ module hinge_arm(axis, offset, hinge_rise, hinge_reach, axle_thickness, hinge_wi
       hull()
       {
         circle(r = outer_axle_radius);
-        translate([hinge_seperation - 0.1, 0, 0])
-          square([hinge_reach, hinge_height]);
+        translate([hinge_seperation + 10.4, 8, 20])
+          square([hinge_reach, hinge_height + 4]);
       }
       circle(r = axle_radius + axle_gap);
     }
   }
 }
 
-module hinge_bay(axis, offset, hinge_rise, hinge_reach, axle_thickness, hinge_width, hinge_gap)
+module hinge_bay(axis, offset, hinge_rise, hinge_reach, axle_thickness, hinge_width, hinge_gap, hinge_rotate)
 {
   axle_radius=axle_thickness*2;
   outer_axle_radius = axle_radius + axle_thickness + axle_gap;

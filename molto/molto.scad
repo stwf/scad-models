@@ -1,6 +1,9 @@
 use <../rpi.scad>;
 use <../screens.scad>;
+use <../hinge.scad>;
 
+hinge_rotate=0;
+module __Customizer_Limit__ () {}
 
 $fn = 50;
 show_caddy=false;
@@ -23,7 +26,7 @@ corner_radius=2;
 post_height=18;
 p_top = 14;
 usb_hub = [112,47,24];
-usb_hub_overhang = 18;
+usb_hub_overhang = 14;
 usb_drive=[116,22,74];
 cpu_bay=[86, 65, 26];
 cpu_bay_height=12;
@@ -36,23 +39,99 @@ module chomp_stand()
   {
     union() {
       chomp_base();
-      translate([-31, 102, 13])
-        rotate([115,0,0])
-          5_inch_touchscreen(frame_top=3);
       base();
-      translate([-31, 54, 0])
-        cube([160, 48, 2]);
-      translate([-31, 89, 0])
-        cube([160, 8, 22]);
+
+      translate([10, 101.2, 33]) {
+  //      rotate([0,90,0])
+  //      cylinder(h=200, r=1);
+        rotate([-hinge_rotate,0,0]) {
+          translate([-42, -4, 21])
+          rotate([180,0,0]){
+            5_inch_touchscreen(frame_top=0, frame_bottom=6, frame_front=10);
+          }
+        }
+      }
+
+      translate([-18, 90, 33])
+        rotate([180, -90, 90]) {
+          hinge(0, 32, hinge_rise=1, hinge_reach=2, hinge_reach_2=2, hinge_width=20, hinge_rotate_b=hinge_rotate);
+          hinge(0, 100, hinge_rise=1, hinge_reach=2, hinge_width=20, hinge_rotate_b=hinge_rotate);
+        }
+
+
+      front_floor();
     }
     hd_bays();
-    cutaways();
     usb_hub_bay();
-    
-    translate([-31 - slop, 97, 0])
-        cube([160 + 2slop, 8, 40]);
-
+    cutaways();
+  //  front_nose();
   }
+}
+
+module front_wall() {
+   
+      translate([-31, 89, 0])
+        cube([160, 8, 22]);
+
+}
+
+module front_floor() {
+  union() {
+    difference() {
+      front_floor_piece(6);
+      translate([0, 0, 2])
+        front_floor_cutout(6);
+
+      translate([0, 0, 2])
+        linear_extrude(22)
+          translate([2, 40, 0])
+            square([93,20]);
+    }
+  }
+}
+
+module front_floor_piece(r) {
+  linear_extrude(22)
+    hull() {
+      translate([-20, 95, 0])
+      circle(r=r);
+
+      translate([92, 54, 0])
+      circle(r=r);
+
+      translate([115, 95, 0])
+      circle(r=r);
+
+      translate([6, 54, 0])
+      circle(r=r);
+    }
+}
+
+module front_floor_cutout(r) {
+  linear_extrude(22)
+    hull() {
+      translate([-10, 84, 0])
+      circle(r=r);
+
+      translate([90, 58, 0])
+      circle(r=r);
+
+      translate([105, 84, 0])
+      circle(r=r);
+
+      translate([7, 58, 0])
+      circle(r=r);
+    }
+}
+
+module front_floor_old() {
+        translate([-31, 54, 0])
+        cube([160, 42, 2]);
+
+}
+module front_nose() {
+    translate([-31 - slop, 97- slop, 0])
+        cube([162 + 2slop, 8, 40]);
 }
 
 module rpi_cable_bay() {
@@ -65,15 +144,15 @@ module chomp_base()
   rotate([-90,180,0])
     translate([-99, 0, usb_hub.z + 2])
         rpi4( padding_top = p_top,
-          padding_front = 6,
+          padding_front = 2,
           padding_back = 24,
           padding_bottom = 4,
-          padding_left = 4,
+          padding_left = 6,
           buffer_top = 0,
           buffer_back = 2,
           buffer_bottom = 2,
-          buffer_front = 8,
-          buffer_left=6,
+          buffer_front = 0,
+          buffer_left=4,
           expose_hdmi1=false,
           expose_hdmi2=false,
           expose_power=false,
@@ -84,7 +163,7 @@ module chomp_base()
 
 module usb_hub_bay()
 {
-  translate([(base_width - usb_hub.x) / 2, usb_hub_overhang - usb_hub.y, floor_height])
+  translate([(base_width - usb_hub.x) / 2 - 12, usb_hub_overhang - usb_hub.y, floor_height])
 
   cube(usb_hub);
 }
@@ -92,11 +171,11 @@ module usb_hub_bay()
 module cutaways()
 {  
   rotate([0,90,0])
-    translate([-16, 4, -2 - slop])
+    translate([-16, 4, -12 - slop])
       linear_extrude(4 + 2slop)
         union() {
           circle(10);
-          translate([-9.9, -6.4, -2- slop])
+          translate([-9.8, -8, - 6 - slop])
             square([19.8, 8.1]);
         }
 }
@@ -135,6 +214,7 @@ module screw_post(sqr_it)
 
 module base()
 {
+    translate([-10, 0, 0])
     linear_extrude(base_height)
     {
       hull() {
@@ -144,20 +224,21 @@ module base()
         translate([base_width, usb_drive.y + wall_thickness]) circle(corner_radius);
       }
     }
+    translate([-12, 0, 0])
     linear_extrude(floor_height*3)
     {
       hull() {
         translate([0,0]) square(corner_radius);
         translate([base_width - 3,0]) square(corner_radius);
-        translate([3,-28]) circle(corner_radius);
-        translate([base_width - 3, -28]) circle(corner_radius);
+        translate([3,-32]) circle(corner_radius);
+        translate([base_width - 3, -32]) circle(corner_radius);
       }
     }
 }
 
 module hd_bays()
 {
-    translate([0, 0, floor_height + usb_hub.z + wall_thickness])
+    translate([-10, 0, floor_height + usb_hub.z + wall_thickness])
     cube(usb_drive);
 
 }
