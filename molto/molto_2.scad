@@ -2,12 +2,13 @@ use <../rpi.scad>;
 use <../screens.scad>;
 use <../hinge.scad>;
 
-show_base=true;
-show_cap=true;
-
+hinge_rotate=0;
 module __Customizer_Limit__ () {}
 
 $fn = 50;
+show_caddy=false;
+
+module __Customizer_Limit__ () {}
 slop = 0.01;
 2slop = 0.02;
 expose_card=false;
@@ -31,122 +32,102 @@ cpu_bay=[86, 65, 26];
 cpu_bay_height=12;
 wall_thickness=2.0;
 base_depth=usb_drive.y*2 + wall_thickness*3 + cpu_bay.y;
-hinge_rotate=60;
-cover_offset=[-30, 101.2, 20];
-
-module case() {
-  if (show_base) {
-    chomp_stand();
-    if (show_cap) {
-      embedded_chomp_display();
-    }
-  }
-  else if (show_cap) {
-    chomp_display();
-  }
-}
-
-module embedded_chomp_display(){
-  translate(cover_offset)
-    rotate([-hinge_rotate,0,0])
-      chomp_display(hinge_rotate);
-}
-
-module chomp_display(hinge_rotate) {
-  color("blue"){
-    difference() {
-      union() {
-        rotate([hinge_rotate,0,0])
-          translate([30, -101.2, 0])
-            case_floor();
-        rotate([180,0,0]) {
-          translate([0, 18, -8])
-          5_inch_touchscreen(frame_top=0, frame_bottom=6, frame_front=10, frame_back=1);
-        }
-      }
-        rotate([180,0,0]) {
-          translate([0, 18, 0])
-          5_inch_touchscreen(frame_top=0, frame_bottom=6, frame_front=10, frame_back=1);
-        }
-    }
-  }
-}
 
 module chomp_stand()
 {
   union() {
-    difference() {
-      union() {
-        chomp_base();
-        base();
-        front_floor();
-      }
-      hd_bays();
-      usb_hub_bay();
-      cutaways();
+  difference()
+  {
+    union() {
+      chomp_base();
+      base();
+
+
+
+      front_floor();
     }
+    hd_bays();
+    usb_hub_bay();
+    cutaways();
+
+      translate([6.6, 88, 12])
+        cube([14.8, 22, 22]);
+      translate([74.6, 94, 12])
+        cube([14.8, 22, 22]);
+
+  //  front_nose();
+  }
+        translate([10, 100, 23]) {
+        rotate([0,90,0])  cylinder(h=200, r=1);
+        rotate([-hinge_rotate,0,0]) {
+          translate([-42, -6, 23])
+          rotate([180,0,0]){
+            5_inch_touchscreen(frame_top=0, frame_bottom=6, frame_front=10);
+          }
+        }
+      }
+
+      translate([-18, 90, 23])
+        rotate([180, -90, 90]) {
+          hinge(0, 32, hinge_rise=2, hinge_reach=0, hinge_reach_2=2, hinge_width=14, hinge_rotate_b=hinge_rotate, height_2=8);
+          hinge(0, 100, hinge_rise=2, hinge_reach=0, hinge_reach_2=2, hinge_width=14, hinge_rotate_b=hinge_rotate, height_2=8);
+        }
   }
 }
 
-module case_floor() {
+module front_wall() {
+   
+      translate([-31, 89, 0])
+        cube([160, 8, 22]);
+
+}
+
+module front_floor() {
   union() {
     difference() {
-      front_floor_piece(116);
+      front_floor_piece(6);
       translate([0, 0, 2])
-        front_floor_cutout(116);
+        front_floor_cutout(6);
 
       translate([0, 0, 2])
-        linear_extrude(16)
+        linear_extrude(22)
           translate([2, 40, 0])
             square([93,20]);
     }
   }
 }
 
-module front_floor() {
-  union() {
-    difference() {
-      front_floor_piece(20);
-      translate([0, 0, 2])
-        front_floor_cutout(22);
-
-      // translate([0, 0, 2])
-      //   linear_extrude(20)
-      //     translate([20, 40, 0])
-      //       square([93,20]);
-    }
-  }
-}
-
 module front_floor_piece(r) {
-  linear_extrude(r)
+  linear_extrude(22)
     hull() {
       translate([-20, 95, 0])
-      circle(r=6);
+      circle(r=r);
 
-      translate([102, 56, 0])
-      square(6);
+      translate([92, 54, 0])
+      circle(r=r);
 
       translate([115, 95, 0])
-      circle(r=6);
+      circle(r=r);
 
-      translate([-11, 56, 0])
-      square(6);
+      translate([6, 54, 0])
+      circle(r=r);
     }
 }
 
 module front_floor_cutout(r) {
-  linear_extrude(r)
+  linear_extrude(22)
     hull() {
-      translate([-20, 94, 0])
-      circle(r=3);
+      translate([-10, 84, 0])
+      circle(r=r);
 
-      translate([99, 56, 0]) square(6);
+      translate([90, 58, 0])
+      circle(r=r);
 
-      translate([115, 94, 0])
-      circle(r=3);
+      translate([105, 84, 0])
+      circle(r=r);
 
-      translate([-8, 56, 0]) square(6);
+      translate([7, 58, 0])
+      circle(r=r);
     }
 }
 
@@ -168,17 +149,17 @@ module rpi_cable_bay() {
 module chomp_base()
 {
   rotate([-90,180,0])
-    translate([-108, 0, usb_hub.z])
+    translate([-99, 0, usb_hub.z + 2])
         rpi4( padding_top = p_top,
           padding_front = 2,
           padding_back = 24,
           padding_bottom = 8,
-          padding_left = 26,
+          padding_left = 6,
           buffer_top = 0,
           buffer_back = 2,
           buffer_bottom = 2,
           buffer_front = 0,
-          buffer_left=3,
+          buffer_left=4,
           expose_hdmi1=false,
           expose_hdmi2=false,
           expose_power=false,
@@ -270,7 +251,7 @@ module hd_bays()
 }
 
 
-case();
+chomp_stand();
 
 
 

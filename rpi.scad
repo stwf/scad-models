@@ -82,15 +82,15 @@ module rpi4(
       buffer_bottom + padding_bottom
     ]) {
       if (expose_usb1) 
-        translate([rpi_size.x, 2, 1])
+        translate([rpi_size.x, 3, 0])
           cube([16, 16, 19]);
 
       if (expose_usb2) 
-        translate([rpi_size.x, 20, 1])
+        translate([rpi_size.x, 21, 0])
           cube([16, 16, 19]);
 
       if (expose_ethernet)  
-        translate([rpi_size.x, 38, 1])
+        translate([rpi_size.x, 39, 0])
           cube([16, 18, 17]);
     }
     translate([buffer_left + padding_left, 0, buffer_bottom + padding_bottom]) {
