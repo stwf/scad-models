@@ -4,7 +4,7 @@ show_screen = false;
 module __Customizer_Limit__ () {}
 
 slop=0.01;
-2slop=0.02;
+slop2=0.02;
 def_frame_front = 20;
 def_frame_back = 20;
 def_frame_left = 20;
@@ -13,33 +13,33 @@ def_frame_bottom = 6;
 def_frame_top = 0;
 screw_mount = 3.8;
 
-5_inch = [122, 77, 5];
+five_inch = [122, 77, 5];
 
 // 5_inch_touchscreen();
 
-module 5_inch_touchscreen(
+module five_inch_touchscreen(
   frame_left = def_frame_left,
   frame_right = def_frame_right,
   frame_front = def_frame_front,
   frame_back = def_frame_back,
   frame_bottom = def_frame_bottom,
   frame_top = def_frame_top) {
-  draw_screen(5_inch, frame_left=frame_left, frame_right=frame_right, frame_top=frame_top, frame_bottom=frame_bottom,
+  draw_screen(five_inch, frame_left=frame_left, frame_right=frame_right, frame_top=frame_top, frame_bottom=frame_bottom,
     frame_back=frame_back, frame_front=frame_front);
 }
 
-module 5_inch_display(extra = 1, hole = true) {
+module five_inch_display(extra = 1, hole = true) {
   color("white")
-    cube(5_inch);
+    cube(five_inch);
   color("lime")
     translate([0, 0, -extra - slop]) {
-      cube([5_inch.x, 5_inch.y, extra + 2slop]);
+      cube([five_inch.x, five_inch.y, extra + slop2]);
       screw_tab(true, extra, hole);
-      translate([5_inch.x - 7.6, 0, 0])
+      translate([five_inch.x - 7.6, 0, 0])
         screw_tab(true, extra, hole);
-      translate([5_inch.x - 7.6, 5_inch.y + 7.6, 0])
+      translate([five_inch.x - 7.6, five_inch.y + 7.6, 0])
         screw_tab(false, extra, hole);
-      translate([0, 5_inch.y + 7.6, 0])
+      translate([0, five_inch.y + 7.6, 0])
         screw_tab(false, extra, hole);
     }
 }
@@ -80,14 +80,14 @@ module draw_screen(screen_size,
 
     rotate([0, 180, 0])
       translate([-screen_size.x-frame_left, frame_back, -frame_bottom])
-        5_inch_display(extra=12);
+        five_inch_display(extra=12);
   } else {
     difference () {
       handle_draw_screen(screen_size, frame_left, frame_right, frame_front, frame_back, frame_bottom, frame_top);
 
       rotate([0, 180, 0])
         translate([-screen_size.x-frame_left, frame_back, -frame_bottom])
-          5_inch_display(extra=12, hole = false);
+          five_inch_display(extra=12, hole = false);
     }
   }
 }
@@ -109,7 +109,7 @@ module handle_draw_screen(screen_size,
       frame_bottom + frame_top
     ]);
     translate([frame_left, frame_back, -slop])
-      cube(screen_size + [0, 2slop, 2slop + frame_bottom]);
+      cube(screen_size + [0, slop2, slop2 + frame_bottom]);
     
     translate([frame_left, frame_back, 2]) {
       translate([screw_mount, -screw_mount, 0])
