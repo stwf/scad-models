@@ -165,8 +165,8 @@ module gen_rpi(
       difference()
       {
         cube(rpi_cutout + rpi_buffer);
-        translate(rpi_origin)
-        cube(rpi_cutout + [0, 0, slop]);
+        translate(rpi_origin - [slop, slop, slop])
+        cube(rpi_cutout + [2slop, 2slop, 2slop]);
       }
       
       translate(rpi_origin + [padding_left, padding_back, 0])
