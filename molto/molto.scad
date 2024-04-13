@@ -55,47 +55,125 @@ module embedded_chomp_display(){
 
 module chomp_display() {
   rotate([180,0,0])
-    color("lightblue") {
-      rotate([hinge_rotate,0,0])
-        difference() {
-          union() {
-            translate([60, -97, 0]) {
-              linear_extrude(86)
-                difference() {      
-                  display_shell();
-              
-                  offset(-3)
+    color("lightblue")
+      union() {
+        rotate([hinge_rotate,0,0])
+          difference() {
+            intersection() {
+              // display shell
+              translate([60, -97, 0]) {
+                linear_extrude(82)
+                  difference() {      
                     display_shell();
+                
+                    offset(-3)
+                      display_shell();
+                  }
+              }
+              //curvy part
+              translate([-46, -12, -14])
+                rotate([-90,-hinge_rotate + 90,-90]) {
+                    linear_extrude(220 + slop2)
+                      curvy_shape();
                 }
-                translate([0, 0, 86])
-                  linear_extrude(4)
-                    display_shell();
+
+            }
+            rotate([-hinge_rotate,0,0])
+              translate([-46, -88, -14])
+                display_cutouts();
+
+            rotate([180,0,0])
+              translate([60, 78, -22  ])
+                linear_extrude(46)
+                  base_part();
+              
+          //    translate([60, -98, -32  ])
+            //  step_shapes();
+
+          }
+        
+        translate([-26, -109, -8])
+          trimmed_screen();
+
+        translate([-16, 4, -18])
+          rotate([-90,90,-90]) {
+            difference() {
+              linear_extrude(152 + slop2)
+                curvy_shape2();
+              
+              translate([0, 3, 0])
+                linear_extrude(152 + slop2)
+                  curvy_shape2();
             }
           }
-          rotate([-hinge_rotate,0,0])
-            translate([-46, -88, -14])
-              display_cutouts();
-              step_shapes();
-         
-        }
-      
-      translate([-26, -109, -8]) {
-        intersection() {      
-          translate([-10, 114, 13])
-            rotate([180,0,0])
-              five_inch_touchscreen(frame_top=0, frame_bottom=3, frame_front=30, frame_back=20, frame_right=35, frame_left=35);
-            
-          rotate([hinge_rotate,0,0])
-            translate([86, -32, -88])
-              linear_extrude(90)
-                display_shell();
 
-        }
-      }
+
     }
 }
 
+module curvy_part() {
+  rotate([0,90,0])
+  translate([0, 0, -16 - slop])
+    linear_extrude(152 + slop2)
+      curvy_shape();
+}
 
+module curvy_shape() {
+  offset(3)
+    polygon([
+      [2,-102],
+      [-20,-100],
+     
+      [-20, 0],
+      [89, 0],
+ 
+      [89, -92],
+      [79, -102],
+      [34, -100]
+    ]);
+}
+module curvy_shape2() {
+  offset(3)
+    polygon([
+      [2,-102],
+      [-20,-100],
+     
+      [-20, -82],
+ 
+      [62, -92],
+      [79, -100],
+      [34, -100]
+    ]);
+}
+
+module curvy_shape_old() {
+   hull() {
+    translate([14, -111])
+      circle(13);
+    translate([74, -100])
+      circle(13);
+    translate([114, -86])
+      circle(13);
+    translate([10, -186])
+      circle(13);
+    translate([110, -186])
+      circle(13);
+  }
+}
+
+module trimmed_screen() {
+  intersection() {      
+    translate([-10, 121, 13])
+      rotate([180,0,0])
+        five_inch_touchscreen(frame_top=0, frame_bottom=3, frame_front=30, frame_back=20, frame_right=35, frame_left=35);
+      
+    rotate([hinge_rotate,0,0])
+      translate([86, -32, -88])
+        linear_extrude(84)
+          display_shell();
+
+  }
+}
 
 module display_cutouts() {
             rotate([-0,0,0]) {
@@ -108,7 +186,7 @@ module display_cutouts() {
 
 module display_shell() {
      union() {
-       front_floor_shape();
+ #      front_floor_shape();
         translate([0, -6, 88])
           base_part();
      }
