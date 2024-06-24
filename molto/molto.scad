@@ -1,4 +1,6 @@
 $fn = 50;
+include <BOSL2/std.scad>
+include <BOSL2/joiners.scad>
 
 use <../rpi.scad>;
 use <../screens.scad>;
@@ -15,7 +17,7 @@ base_height=52;
 floor_height=2;
 corner_radius=2;
 p_top = 14;
-usb_hub = [114,26,47];
+usb_hub = [112,26,47];
 usb_drive=[116,22,74];
 cpu_bay_height=65;
 wall_thickness=3.0;
@@ -28,7 +30,8 @@ front_tray_front=95;
 front_tray_back=56;
 tray_wall_width=6;
 base_back_height=46;
-far_back_wall = -usb_hub.y - corner_radius;
+front_tray_height=20;
+far_back_wall = -usb_hub.y - corner_radius + 2;
 base_width=front_tray_width - 2*front_tray_offset;
 excess = 2*wall_thickness;
 
@@ -44,6 +47,35 @@ module case() {
   }
 }
 
+module chomp_stand()
+{
+  union() {
+    difference() {
+      union() {
+        base();
+        translate([0, tray_wall_width, 0])
+          front_floor();
+        translate([-usb_drive.x/2 + 3, 0, 1])
+          processor();
+        translate([-usb_drive.x/2 + 10, 1, 1])
+          usb_hd_bay();
+        
+        translate([-usb_drive.x/2 + 11, -usb_drive.y - 3*wall_thickness, 0]) {
+          usb_hub_bay();
+        }
+      }
+ //side punchout
+      translate([-usb_drive.x/2 + 6, 0, 0]) {
+        translate([-13, -34, floor_height + wall_thickness + 6])
+          cube([12, 7, 20]);
+      }
+
+      translate([-usb_drive.x/2 + 6, 0, 0]) {
+        back_panel_punchout();
+      }
+    }
+  }
+}
 
 module embedded_chomp_display(){
   translate(cover_offset)
@@ -109,7 +141,7 @@ module chomp_display() {
               rotate([-90,90,-90])     
                 rotate([-hinge_rotate,0,0])
                   translate([-76, -90, -102]) {
-        #           linear_extrude(90)
+                   linear_extrude(90)
                       base_part();
                   }
             }
@@ -180,7 +212,7 @@ module display_cutouts() {
 
 module display_shell() {
      union() {
-        front_floor_shape();
+        front_floor_shape(6);
         translate([0, -6, 88])
           base_part();
      }
@@ -189,7 +221,8 @@ module display_shell() {
 module display_shell_cutout() {
   union() {
     translate([0, 0 - slop, 0 - slop])
-      front_floor_cutout(100);
+  linear_extrude(100)
+    front_floor_shape(3);
     
     translate([0, -6, 88])
       offset(-3)
@@ -198,109 +231,45 @@ module display_shell_cutout() {
   }
 }
 
-
-
-
-module chomp_stand()
-{
-  union() {
-    difference() {
-      union() {
-        base();
-
-        translate([0, tray_wall_width, 0])
-          front_floor();
-        translate([-usb_drive.x/2 + 3, 0, 1])
-          processor();
-        translate([-usb_drive.x/2 + 10, 1, 1])
-          usb_hd_bay();
-        
-        translate([-usb_drive.x/2 + 11, -usb_drive.y - 3*wall_thickness, 0]) {
-          usb_hub_bay();
-        }
-      }
- //side panel punchout
-      translate([-usb_drive.x/2 + 6, 0, 0]) {
-        translate([-30, -28, floor_height + wall_thickness + 6])
-          cube([16, 17, 90]);
-      }
-
-      translate([-usb_drive.x/2 + 6, 0, 0]) {
-        back_panel_punchout();
-      }
-    }
-  }
-}
-
-module case_floor() {
-  union() {
-    difference() {
-      front_floor_piece(90);
-      translate([0, 0 - slop, 0 - slop])
-        front_floor_cutout(100);
-    }
-  }
-}
-
 module front_floor() {
   union() {
     difference() {
-      front_floor_piece(20);
+      linear_extrude(front_tray_height)
+        front_floor_shape(6);
       translate([0, 0 - slop, floor_height])
-        front_floor_cutout(22);
+        linear_extrude(front_tray_height - floor_height + slop)
+          front_floor_shape(3);
     }
-  }
+
+    difference() {
+      intersection() {
+        linear_extrude(front_tray_height + 10)
+            front_floor_shape(3);
+        rotate([0, 90, 0])
+          translate([-16, 73, -110])
+            linear_extrude(200)
+              circle(12);
+      }
+      linear_extrude(front_tray_height + 10)
+        offset(-2)
+          front_floor_shape(3);
+    }
+  }        
 }
 
-module front_floor_piece(r) {
-  linear_extrude(r)
+module front_floor_shape(r) {
     hull() {
       translate([-front_tray_width/2, front_tray_front, 0])
-      circle(r=6);
+      circle(r=r);
 
-      translate([-front_tray_width/2 + front_tray_offset - 3, front_tray_back, 0])
+      translate([-front_tray_width/2 + front_tray_offset  + 3 - r, front_tray_back, 0])
       square(6, true);
 
       translate([front_tray_width/2, front_tray_front, 0])
-      circle(r=6);
+      circle(r=r);
 
-      translate([front_tray_width/2 - front_tray_offset + 3, front_tray_back, 0])
+      translate([front_tray_width/2 - front_tray_offset + r - 3, front_tray_back, 0])
       square(6, true);
-
-    }
-}
-module front_floor_shape() {
-    hull() {
-      translate([-front_tray_width/2, front_tray_front, 0])
-      circle(r=6);
-
-      translate([-front_tray_width/2 + front_tray_offset - 3, front_tray_back, 0])
-      square(6, true);
-
-      translate([front_tray_width/2, front_tray_front, 0])
-      circle(r=6);
-
-      translate([front_tray_width/2 - front_tray_offset + 3, front_tray_back, 0])
-      square(6, true);
-
-    }
-}
-
-module front_floor_cutout(r) {
-  linear_extrude(r)
-    hull() {
-      translate([-front_tray_width/2, front_tray_front, 0])      
-        circle(r=3);
-
-      translate([-front_tray_width/2 + front_tray_offset, front_tray_back, 0])
-        square(6, true);
-
-      translate([front_tray_width/2, front_tray_front, 0])
-        circle(r=3);
-
-      translate([front_tray_width/2 - front_tray_offset, front_tray_back, 0]) 
-        square(6, true);
-
     }
 }
 
@@ -315,8 +284,8 @@ module base() {
       }
       
   //front punchout
-  translate([-73, 50 + slop, 0])
-    cube([146, 20 + slop, 60]);
+  translate([-73, 45, 0])
+    cube([146, 20, 60]);
   }
 }
 
@@ -364,8 +333,8 @@ module usb_hd_bay()
   color("white")
     translate([1, -4, floor_height - 1])
       difference() {
-        cube([usb_drive.x + excess, usb_drive.y + excess, base_back_height]);
-        translate([wall_thickness, wall_thickness, 0])
+        cube([usb_drive.x + excess - 2, usb_drive.y + excess, base_back_height]);
+        translate([wall_thickness + 1, wall_thickness, 0])
           cube(usb_drive);
       
         // side cutout
@@ -378,10 +347,10 @@ module usb_hub_bay() {
   color("blue")
     translate([0, -1, floor_height - 1]) {
       difference() {
-        cube([usb_hub.x + excess + 1, usb_hub.y + excess, base_back_height]);
+        cube([usb_hub.x + excess, usb_hub.y + excess, base_back_height - 6]);
         
-        translate([wall_thickness, wall_thickness, 0])
-          cube(usb_hub + [0, 0, 100]);
+        translate([wall_thickness * 2, wall_thickness, 0])
+          cube(usb_hub + [0, 0, 30]);
 
     //    side cutout
         translate([-10, 6, floor_height + wall_thickness + 4])
@@ -393,7 +362,7 @@ module usb_hub_bay() {
 module back_panel_punchout() {
   translate([2, -34, slop])
     translate([18, -10, floor_height + wall_thickness - 2])
-      cube([98, 22, 60]);
+      cube([98, 22, 30]);
 }
 
 case();
