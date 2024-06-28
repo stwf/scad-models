@@ -115,8 +115,18 @@ module rpi4(
 }
 
 module rpi0(
-  rpi_buffer, 
-  rpi_padding,
+  buffer_top = def_buffer_top, 
+  buffer_bottom = def_buffer_bottom, 
+  buffer_left = def_buffer_left, 
+  buffer_right = def_buffer_right, 
+  buffer_front = def_buffer_front, 
+  buffer_back = def_buffer_back, 
+  padding_top = def_padding_top, 
+  padding_bottom = def_padding_bottom, 
+  padding_left = def_padding_left, 
+  padding_right = def_padding_right, 
+  padding_front = def_padding_front, 
+  padding_back = def_padding_back, 
   expose_card=false,
   expose_hdmi=false,
   expose_usb1=false,
@@ -129,7 +139,8 @@ module rpi0(
   rpi_screws=[58, 23, 3];
   rpi_size=[65, 30, 3];
 
-  gen_rpi(rpi_screws, rpi_size, rpi_buffer, rpi_padding);
+  gen_rpi(buffer_top, buffer_bottom, buffer_left, buffer_right, buffer_front, buffer_back, 
+    padding_top, padding_bottom, padding_left, padding_right, padding_front, padding_back, rpi_screws, rpi_size);
   
   
   

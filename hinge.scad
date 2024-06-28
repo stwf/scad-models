@@ -21,21 +21,38 @@ hinge(0, 12, hinge_rotate=the_hinge_rotate);
 hinge(0, 48, hinge_rotate=the_hinge_rotate);
 }
 
-module hinge(axis, offset, hinge_rise=4.0, hinge_reach=0.1, hinge_reach_2=0.1, axle_thickness=1.2, hinge_width=5, hinge_gap=0.4, hinge_rotate=0, hinge_rotate_b=0, height_2=10)
+
+
+
+
+module hinge(axis, offset, hinge_rise=4.0,hinge_rise2=4.0, hinge_reach=0.1, hinge_reach_2=0.1, axle_thickness=1.2, hinge_width=5, hinge_gap=0.4, hinge_rotate=0, hinge_rotate_b=0, height_2=10)
 {
-  hinge_arm(axis, offset, hinge_rise, hinge_reach_2, axle_thickness, hinge_width, hinge_gap, hinge_rotate_b, height_2);
+  hinge_arm(axis, offset, 
+    hinge_rise = hinge_rise2,
+    hinge_reach = hinge_reach_2,
+    axle_thickness = axle_thickness,
+    hinge_width = hinge_width,
+    hinge_gap = hinge_gap, 
+    hinge_rotate = hinge_rotate, height = height_2);
   hinge_bay(axis, offset, hinge_rise, hinge_reach, axle_thickness, hinge_width, hinge_gap, hinge_rotate, height_2);
 }
 
-module hinge_arm(axis, offset, hinge_rise, hinge_reach, axle_thickness, hinge_width, hinge_gap, hinge_rotate_b, height_2)
+module hinge_arm(axis, offset, 
+  hinge_rise=4.0,
+  hinge_reach=0.1,
+  axle_thickness=1.2,
+  hinge_width=5,
+  hinge_gap=0.4,
+  base_reach=10,
+  base_height=4,
+  height=10)
 {
   axle_radius=axle_thickness*2;
   outer_axle_radius = axle_radius + axle_thickness + axle_gap;
 
-  hinge_height=height_2 + hinge_rise;
+  hinge_height=height + hinge_rise;
   translate([axis, offset - hinge_width/2, hinge_height])
-  rotate([-90,0,0]) 
-  rotate([0,0, -hinge_rotate_b])
+  rotate([-90,0,-90]) 
   linear_extrude(hinge_width)
   {
     difference()
@@ -43,8 +60,8 @@ module hinge_arm(axis, offset, hinge_rise, hinge_reach, axle_thickness, hinge_wi
       hull()
       {
         circle(r = outer_axle_radius);
-        translate([hinge_seperation + 10.4, 8, 20])
-          square([hinge_reach, hinge_height + 4]);
+        translate([hinge_seperation + base_reach, base_height])
+          square([base_reach, base_height]);
       }
       circle(r = axle_radius + axle_gap);
     }
