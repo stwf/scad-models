@@ -2,7 +2,9 @@ use <../rpi.scad>;
 use <../hinge.scad>;
 include <BOSL2/std.scad>
 include <BOSL2/joiners.scad>
+include <BOSL2/screws.scad>
 
+$slop = 1;
 show_base = true;
 show_cap = true;
 show_face = false;
@@ -55,17 +57,17 @@ union()
           buffer_bottom=6,
           padding_left=1,
           padding_right=1,
-          padding_bottom=6);
+          padding_bottom=9);
 
         translate([0, 20, 8])
           rotate([90,0,90])
             usb_panel();
 
-        translate([83, 20, 22])
+        translate([83, 20, 25])
           half_joiner_clear();
       }
 
-      translate([83, 20, 22])
+      translate([83, 20, 25])
         half_joiner(screwsize=3);
     }
     if ( show_cap ) {
@@ -78,11 +80,11 @@ union()
 
 module rgb_button() {
   color("blue") {
-    cylinder(1.5, d=21);
+    cylinder(1.5, d=22);
     translate([0, 0, 1.5])
-      cylinder(4, d=16);
+      cylinder(4, d=17);
     translate([0, 0, 5.5])
-      cylinder(24, d=22);
+      cylinder(24, d=24);
   }
 }
 
@@ -91,16 +93,24 @@ module usb_panel()
   color("yellow") {
     linear_extrude(7)
       hull() {
-      translate([-8.15, 0, 0])
+      translate([-9, 0, 0])
         circle(d=8.25);
-      translate([8.15, 0, 0])
+      translate([9, 0, 0])
         circle(d=8.25);
-      translate([-5, -6, 0])
-        square([10, 12]);
+      translate([-6, -6, 0])
+        square([12, 12]);
       }
+  translate([10, 0, 7])
+      rotate([180,0,0])
+        screw_hole("m1x1",length=6,anchor=TOP, teardrop=true);
+  translate([-10, 0, 7])
+      rotate([180,0,0])
+        screw_hole("m1x1",length=6,anchor=TOP, teardrop=true);
+
+
       linear_extrude(20)
-        translate([-5, -6, 0])
-          square([10, 12]);
+        translate([-6, -6, 0])
+          square([12, 12]);
 
       cylinder(35, d=7.5);
   }
@@ -125,11 +135,11 @@ module cap(hinge_2_location, hinge_1_height) {
       union() {
         difference() {
           cap_top();
-          translate([6, 18, 0])
+          translate([6, 20, 0])
             rotate([0, -180, 0])
               half_joiner_clear();
         }
-        translate([6, 18, 0])
+        translate([6, 20, 0])
           rotate([0, -180, 0])
             half_joiner2(screwsize=3);
         
